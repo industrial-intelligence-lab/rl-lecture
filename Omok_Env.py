@@ -1,6 +1,5 @@
 import numpy as np
-# from Omok_Renju_Rule import Renju_Rule # 금수없음
-from IPython.display import clear_output
+# from IPython.display import clear_output
 import os
 
 class Board(object):
@@ -9,7 +8,7 @@ class Board(object):
         self.height = int(kwargs.get('height', 15))
         self.n_in_row = int(kwargs.get('n_in_row', 5))
 
-    def init_board(self, start_player=0) :
+    def init_board(self, start_player=1) :
         self.current_player = start_player 
         self.last_move, self.last_loc = -1, -1
         
@@ -48,9 +47,8 @@ class Board(object):
     def do_move(self, move):
         self.states[move] = self.current_player
         loc = self.move_to_location(move)
-        self.states_loc[loc[0]][loc[1]] = self.current_player + 1 #1 if self.is_you_black() else 2
-        # self.current_player = (self.players[0] if self.current_player == self.players[1] else self.players[1])
-        self.current_player = (0 if self.current_player == 1 else 1)
+        self.states_loc[loc[0]][loc[1]] = self.current_player #1 if self.is_you_black() else 2
+        self.current_player = (2 if self.current_player == 1 else 1)
         self.last_move, self.last_loc = move, loc
 
     def has_a_winner(self):
@@ -102,7 +100,7 @@ class Game(object):
     def __init__(self, board, **kwargs):
         self.board = board
 
-    def graphic(self, board, p1_idx = 0, p2_idx = 1):
+    def graphic(self, board, p1_idx = 1, p2_idx = 2):
         width = board.width
         height = board.height
 
@@ -110,7 +108,7 @@ class Game(object):
         p2_id = self.players[p2_idx].get_id()
         cur_p_id = self.players[board.current_player].get_id()
 
-        clear_output(wait=True)
+        # clear_output(wait=True)
         os.system('cls')
         
         print()
@@ -135,18 +133,19 @@ class Game(object):
                 else : print('　', end='')
             print()
         if board.last_loc != -1 :
-            print(f"플레이어 {cur_p_id}의 수 : ({board.last_loc[0]},{board.last_loc[1]})\n")
+            previous_p_idx = (2 if board.current_player == 1 else 1)
+            print(f"플레이어 {self.players[previous_p_idx].get_id()}({previous_p_idx})의 수 : ({board.last_loc[0]},{board.last_loc[1]})\n")
 
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         self.board.init_board(start_player)
-        self.players = {0: player1, 1: player2}
+        self.players = {1: player1, 2: player2}
         while True:
             if is_shown : self.graphic(self.board)
                 
             current_player = self.board.get_current_player()
             player_in_turn = self.players[current_player]
 
-            move = player_in_turn.get_action(self.board, current_player+1)
+            move = player_in_turn.get_action(self.board, current_player)
                 
             self.board.do_move(move)
             end, winner = self.board.game_end()

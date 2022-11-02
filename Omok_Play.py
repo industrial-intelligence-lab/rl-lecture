@@ -11,5 +11,5 @@ if __name__ == '__main__':
     human1 = h1()
     human2 = h2()
     
-    game.start_play(human1, human2, start_player=random.randint(0,1), is_shown=1)
+    game.start_play(human1, human2, start_player=random.randint(1,2), is_shown=1)
 
