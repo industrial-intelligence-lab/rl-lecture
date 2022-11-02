@@ -1,5 +1,8 @@
 # On-policy first-visit MC control (p.101)
 
+# TODO 
+# 1. performance graph
+
 # Imports
 import gym
 import numpy as np
@@ -15,6 +18,7 @@ NUM_ACTS = env.action_space.n
 ETA = 0.2
 NUM_EPISODES = 100
 GAMMA = 0.9
+VERVOSE = False
 
 # Global vars
 PI = defaultdict(lambda: np.ones(NUM_ACTS)/NUM_ACTS)    # {s: [a,...,a]}
@@ -44,7 +48,7 @@ for e in range(NUM_EPISODES):
         a = np.random.choice(NUM_ACTS, p=PI[s])
         next_s, r, terminated, truncated, info = env.step(a)       
         traj.append((s, a, r))
-        print("State:", s, "Action", a, "Reward:", r, "Terminated:", terminated, "Truncated:", truncated, "Info:", info)
+        if VERVOSE: print("State:", s, "Action", a, "Reward:", r, "Terminated:", terminated, "Truncated:", truncated, "Info:", info)
         s = next_s
 
     # Check trajectory
@@ -65,10 +69,10 @@ for e in range(NUM_EPISODES):
             # Append G to (s, a)
             Returns[(s, a)].append(G)
             # Check returns
-            print('Returns(%s,%s) -> %s' % (s, a, Returns[(s, a)]))            
+            if VERVOSE: print('Returns(%s,%s) -> %s' % (s, a, Returns[(s, a)]))            
             # Update Q
             Q[s][a] = sum(Returns[(s, a)]) / len(Returns[(s, a)])
-            print('Update Q(%s,%s) -> %f' % (s, a, Q[s][a]))
+            if VERVOSE: print('Update Q(%s,%s) -> %f' % (s, a, Q[s][a]))
             # Find a*
             greedy_a = random_argmax(Q[s]) #np.argmax(Q[s])
             print(Q[s], greedy_a)
@@ -78,7 +82,7 @@ for e in range(NUM_EPISODES):
                     PI[s][i] = 1 - ETA + ETA / NUM_ACTS
                 else:
                     PI[s][i] = ETA / NUM_ACTS
-            print('Update PI(%s) -> %s' % (s, PI[s]))
+            if VERVOSE: print('Update PI(%s) -> %s' % (s, PI[s]))
 
 env.close()
 
