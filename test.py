@@ -48,3 +48,12 @@ print(np.argmax(PI['a']))
 
 x = np.ones(4)
 print(x / 4)
+
+
+from Person import Human 
+
+p1 = Human('park', 32)
+print(p1.name)
+
+location = [int(n, 10) for n in "1,2,3,4,5".split(",")]
+print(location)
