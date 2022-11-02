@@ -8,40 +8,14 @@ class Board(object):
         self.width = int(kwargs.get('width', 15))
         self.height = int(kwargs.get('height', 15))
         self.n_in_row = int(kwargs.get('n_in_row', 5))
-        # self.players = [1, 2]  # player1 and player2
 
     def init_board(self, start_player=0) :
-        # self.order = start_player # order = 0 → 사람 선공(흑돌) / 1 → AI 선공(흑돌)
-        self.current_player = start_player #self.players[start_player]  # current_player = 1 → 사람 / 2 → AI
+        self.current_player = start_player 
         self.last_move, self.last_loc = -1, -1
         
         self.states, self.states_loc = {}, [[0] * self.width for _ in range(self.height)]
         self.forbidden_locations, self.forbidden_moves = [], []
-        
-        """
-        # 금수 판정 디버그용
-        self.states_loc = list(
-        [[2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]])
-        
-        for i in range(15) :
-            for j in range(15) :
-                if self.states_loc[i][j] != 0 : self.states[i*15+j] = self.states_loc[i][j]
-        """
-
+      
     def move_to_location(self, move):
         """ 3*3 보드를 예로 들면 : move 5 는 좌표 (1,2)를 의미한다.""" # ex) 0 1 2
         h = move // self.width                                      #     3 4 5
@@ -74,7 +48,7 @@ class Board(object):
     def do_move(self, move):
         self.states[move] = self.current_player
         loc = self.move_to_location(move)
-        self.states_loc[loc[0]][loc[1]] = self.current_player #1 if self.is_you_black() else 2
+        self.states_loc[loc[0]][loc[1]] = self.current_player + 1 #1 if self.is_you_black() else 2
         # self.current_player = (self.players[0] if self.current_player == self.players[1] else self.players[1])
         self.current_player = (0 if self.current_player == 1 else 1)
         self.last_move, self.last_loc = move, loc
@@ -172,7 +146,7 @@ class Game(object):
             current_player = self.board.get_current_player()
             player_in_turn = self.players[current_player]
 
-            move = player_in_turn.get_action(self.board)
+            move = player_in_turn.get_action(self.board, current_player+1)
                 
             self.board.do_move(move)
             end, winner = self.board.game_end()
@@ -182,6 +156,8 @@ class Game(object):
                     if winner != -1 : print("Game end. Winner is", self.players[winner].get_id())
                     else : print("Game end. Tie")
                 return winner
+            
+
     
     '''
     def start_self_play(self, player, is_shown=0, temp=1e-3):
