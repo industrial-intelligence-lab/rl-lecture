@@ -1,15 +1,16 @@
-class Human(object):
+class OmokPlayer(object):
 
     def get_action(self, board, p_id):
         try:
             # print state
-            for x in board.states_loc:
-                print(x)
+            # for x in board.states_loc:
+            #     print(x)
 
-            print("돌을 둘 좌표를 입력하세요", self.get_id(), p_id)
+            print("돌을 둘 좌표를 입력하세요 %s(%d)" % (self.get_id(), p_id))
             location = input()
             if isinstance(location, str) : location = [int(n, 10) for n in location.split(",")]        
-            move = board.location_to_move(location)
+            # move = board.location_to_move(location)
+            return location
         except Exception as e : move = -1
             
         if move == -1 or move in board.states.keys() :
@@ -18,4 +19,4 @@ class Human(object):
         return move
 
     def get_id(self):
-        return "내꺼2"
+        return "데지나라"

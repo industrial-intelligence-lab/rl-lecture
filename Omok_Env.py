@@ -1,6 +1,7 @@
 import numpy as np
 # from IPython.display import clear_output
 import os
+import time
 
 class Board(object):
     def __init__(self, **kwargs):
@@ -26,6 +27,8 @@ class Board(object):
         h, w = location[0], location[1]
         move = h * self.width + w
         if move not in range(self.width * self.height) : return -1
+        # 중복된 수 체크
+        if move in self.states.keys() : return -2
         return move
 
     def current_state(self):
@@ -44,12 +47,17 @@ class Board(object):
         
         return square_state[:, ::-1, :]
 
-    def do_move(self, move):
-        self.states[move] = self.current_player
-        loc = self.move_to_location(move)
-        self.states_loc[loc[0]][loc[1]] = self.current_player #1 if self.is_you_black() else 2
+    def do_move(self, loc):
+        move = self.location_to_move(loc)        
+        # print('loc',loc,'move',move)        
+        if move >= 0:
+            self.states[move] = self.current_player
+            loc = self.move_to_location(move)
+            self.states_loc[loc[0]][loc[1]] = self.current_player #1 if self.is_you_black() else 2                
+        # next turn
         self.current_player = (2 if self.current_player == 1 else 1)
         self.last_move, self.last_loc = move, loc
+        return move    
 
     def has_a_winner(self):
         width = self.width
@@ -86,7 +94,7 @@ class Board(object):
 
     def game_end(self):
         win, winner = self.has_a_winner()        
-        print(win, winner)
+        # print(win, winner)
         if win : return True, winner        
         elif len(self.states) == self.width*self.height : return True, -1
         return False, -1
@@ -96,6 +104,9 @@ class Board(object):
 
 class Game(object):
     players = {}
+    SLEEP_TIME = 5
+    move_result = -100
+    history = []
 
     def __init__(self, board, **kwargs):
         self.board = board
@@ -112,11 +123,11 @@ class Game(object):
         os.system('cls')
         
         print()
-        print("흑돌(●) : 플레이어", p1_id)
-        print("백돌(○) : 플레이어", p2_id)
+        print("흑돌(●) : 플레이어 %s(%d)" % (p1_id, p1_idx))
+        print("백돌(○) : 플레이어 %s(%d)" % (p2_id, p2_idx))
         print("--------------------------------\n")
                 
-        print(cur_p_id, "당신의 차례입니다.\n")
+        print("%s(%d) 차례입니다.\n" % (cur_p_id, board.current_player))
             
         row_number = ['⒪','⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁']
         # row_number = range(14)
@@ -134,7 +145,11 @@ class Game(object):
             print()
         if board.last_loc != -1 :
             previous_p_idx = (2 if board.current_player == 1 else 1)
-            print(f"플레이어 {self.players[previous_p_idx].get_id()}({previous_p_idx})의 수 : ({board.last_loc[0]},{board.last_loc[1]})\n")
+            print(f"플레이어 {self.players[previous_p_idx].get_id()}({previous_p_idx})의 수 : ({board.last_loc[0]},{board.last_loc[1]})")
+            if self.move_result == -1: print(f'범위밖수로 무효처리')
+            if self.move_result == -2: print(f'중복수로 무효처리')
+            time.sleep(self.SLEEP_TIME)
+        
 
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         self.board.init_board(start_player)
@@ -145,16 +160,22 @@ class Game(object):
             current_player = self.board.get_current_player()
             player_in_turn = self.players[current_player]
 
-            move = player_in_turn.get_action(self.board, current_player)
-                
-            self.board.do_move(move)
+            loc = player_in_turn.get_action(self.board, current_player)            
+            self.move_result = self.board.do_move(loc)
+
+            # 복기록
+            self.history.append((player_in_turn.get_id(), current_player, loc, self.move_result))
+
             end, winner = self.board.game_end()
             if end:
                 if is_shown:
                     self.graphic(self.board)
                     if winner != -1 : print("Game end. Winner is", self.players[winner].get_id())
                     else : print("Game end. Tie")
-                return winner
+                return winner, self.history
+                            
+
+            
             
 
     
