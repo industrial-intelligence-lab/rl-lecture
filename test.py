@@ -13,7 +13,11 @@ x = ((random.random() for i in range(N)) for j in range(N))
 print(hash(x))
 x = ((random.random() for i in range(N)) for j in range(N))
 
-print(hash(x))
+print(hash((0,7,4)))
 # x = [[random.random() for i in range(N)] for j in range(N)]
 # print(hash(x))
 # print(hash(('aab',2,2)))
+
+x = np.array([1,2,3])
+x[x > 2] = 7
+print(x)

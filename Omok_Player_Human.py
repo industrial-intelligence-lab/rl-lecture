@@ -4,6 +4,7 @@ class OmokPlayer(object):
         # print state
         # for x in board.states_loc:
         #     print(x)
+        # print(board.current_state_for_me())
 
         print("돌을 둘 좌표를 입력하세요 %s(%d)" % (self.get_id(), p_id))
         location = input()
