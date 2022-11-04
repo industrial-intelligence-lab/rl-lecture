@@ -18,6 +18,6 @@ print(hash((0,7,4)))
 # print(hash(x))
 # print(hash(('aab',2,2)))
 
-x = np.array([1,2,3])
-x[x > 2] = 7
+x = np.array([[1,2,3], [1,12,3]])
+x[x > 2 and x < 10] = 7
 print(x)

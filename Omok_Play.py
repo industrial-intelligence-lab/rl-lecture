@@ -1,7 +1,8 @@
 import random
 from Omok_Env import Board, Game
-from Omok_Player_Random import OmokPlayer_Random as h1
+# from Omok_Player_Random import OmokPlayer_Random as h1
 # from Omok_Player_Random import OmokPlayer_Random as h2
+from Omok_Player_Human import OmokPlayer as h1
 from Omok_Player_Human import OmokPlayer as h2
 
 if __name__ == '__main__':
@@ -12,7 +13,7 @@ if __name__ == '__main__':
     human1 = h1()
     human2 = h2()
 
-    game.SLEEP_TIME = 0
+    game.SLEEP_TIME = 1
     
     winer, history = game.start_play(human1, human2, start_player=random.randint(1,2), is_shown=1)
     # print(winer)
