@@ -155,6 +155,11 @@ class Game(object):
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         self.board.init_board(start_player)
         self.players = {1: player1, 2: player2}
+
+        # let know agents start a new episode
+        player1.episode_start()
+        player2.episode_start()
+
         while True:
             if is_shown : self.graphic(self.board)
                 
@@ -173,6 +178,13 @@ class Game(object):
                     self.graphic(self.board)
                     if winner_idx != -1 : print("Game end. Winner is", self.players[winner_idx].get_id())
                     else : print("Game end. Tie")
+                
+                # let agents know the end of episode
+                player1.episode_end(winner_idx, self.players[winner_idx].get_id(), 
+                                    self.board, 1, self.history)
+                player2.episode_end(winner_idx, self.players[winner_idx].get_id(), 
+                                    self.board, 2, self.history)
+
                 return winner_idx, self.players[winner_idx].get_id(), self.history
                             
 # class Omok_Env:

@@ -11,12 +11,12 @@ class OmokPlayer_MC_Agent(object):
     Q = {}                             # {s: [a,...,a]}
     Returns = defaultdict(list)        # {(s, a): [r,...,r]}
     traj = []
+    last_s, last_a = -1, -1
 
     ut = Omok_Utils()
 
-    def __init__(self, board_size, NUM_EPISODES=100, ETA=0.2, GAMMA=0.9, VERVOSE=True, REPORTING=True):
+    def __init__(self, board_size, ETA=0.2, GAMMA=0.9, VERVOSE=True, REPORTING=True):
         self.board_size = board_size
-        self.NUM_EPISODES = NUM_EPISODES
         self.ETA = ETA
         self.GAMMA = GAMMA
         self.VERVOSE = VERVOSE
@@ -37,40 +37,47 @@ class OmokPlayer_MC_Agent(object):
     def action_num_to_tuple(self, num):
         return (num // 9, num % 9)
 
-    # get action with e-greedy
+    # get action called from Omok_Env
     def get_action(self, board, p_id):
+
+        # 마지막 s, a와 최신의 r을 기록
+        if self.last_s != -1: self.traj.append((self.last_s, self.last_a, 0.0))
+
         a = -1
         s = self.ut.hash(board, p_id)
         if np.random.rand() < self.ETA:
             a = np.random.randint(self.board_size**2)
-            if self.VERVOSE: print('Random action for %s -> %s' % (s, a))
+            if self.VERVOSE: print('Random action %d for %s -> %s (%s)' % (s, p_id, self.action_num_to_tuple(a), a))
         else:
             # Find a*
             a = self.random_argmax(self.Q[s])
-            if self.VERVOSE: print('Greedy action for %s -> %s' % (s, a))
+            if self.VERVOSE: print('Greedy action %d for %s -> %s (%s)' % (s, p_id, self.action_num_to_tuple(a), a))
 
-        # self.traj.append((s, a, 0.0))
+        self.last_s = s
+        self.last_a = a
 
         return self.action_num_to_tuple(a)
 
     # def get_action(self, board, p_id):
     #     a = (np.random.randint(0, 9), (np.random.randint(0, 9)))
     #     print("좌표선택", a, self.get_id(), p_id)                        
-    #     return a        
+    #     return a
 
-    def episode_end(self, winer_idx, winder_id, history):
+    def episode_end(self, winner_idx_idx, winner_idx_id, board, p_id, history):
         
         # record the last transition
-        # self.traj.append((s, a, 0.0))
-
+        s = self.ut.hash(board, p_id)
+        r = 1.0 if winner_idx_id == self.get_id() else 0.0
+        self.traj.append((self.last_s, self.last_a, r))
+ 
         # G
         G = 0
 
         # For each step
-        for i, (s, a, r) in reversed(list(enumerate(history))):
+        for i, (s, a, r) in reversed(list(enumerate(self.traj))):
             # Update G
             G = self.GAMMA*G + r
-            first_idx = next(j for j, t in enumerate(history) if t[0] == s and t[1] == a)
+            first_idx = next(j for j, t in enumerate(self.traj) if t[0] == s and t[1] == a)
             if self.VERVOSE: print(i, (s, a, r), first_idx)
             if i == first_idx:
                 # print(i, (s, a, r))

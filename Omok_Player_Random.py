@@ -14,10 +14,10 @@ class OmokPlayer_Random(object):
     def get_action(self, board, p_id):
 
         a = (np.random.randint(0, self.board_size), (np.random.randint(0, self.board_size)))
-        print("좌표선택", a, self.get_id(), p_id)                        
+        # print("좌표선택", a, self.get_id(), p_id)                        
         return a        
 
-    def episode_end(self, winer_idx, winder_id, history):
+    def episode_end(self, winner_idx_idx, winner_idx_id, board, p_id, history):
         pass
 
     def get_id(self):
