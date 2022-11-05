@@ -2,6 +2,7 @@ import numpy as np
 # from IPython.display import clear_output
 import os
 import time
+import random
 
 class Board(object):
     def __init__(self, **kwargs):
@@ -150,7 +151,7 @@ class Game(object):
             if self.move_result == -2: print(f'중복수로 무효처리')
             time.sleep(self.SLEEP_TIME)
         
-
+    # episode 하나 실행
     def start_play(self, player1, player2, start_player=0, is_shown=1):
         self.board.init_board(start_player)
         self.players = {1: player1, 2: player2}
@@ -164,17 +165,35 @@ class Game(object):
             self.move_result = self.board.do_move(loc)
 
             # 복기록
-            self.history.append((player_in_turn.get_id(), current_player, loc, self.move_result))
+            self.history.append((current_player, player_in_turn.get_id(), loc, self.move_result))
 
-            end, winner = self.board.game_end()
+            end, winner_idx = self.board.game_end()
             if end:
                 if is_shown:
                     self.graphic(self.board)
-                    if winner != -1 : print("Game end. Winner is", self.players[winner].get_id())
+                    if winner_idx != -1 : print("Game end. Winner is", self.players[winner_idx].get_id())
                     else : print("Game end. Tie")
-                return winner, self.history
+                return winner_idx, self.players[winner_idx].get_id(), self.history
                             
+# class Omok_Env:
+    
+#     def __init__(self, player1, player2, width=9, height=9, n_in_row=5, is_shown=1):
+#         self.board = Board(width=width, height=height, n_in_row=n_in_row)
+#         self.game = Game(self.board)
+#         self.game.players = {1: player1, 2: player2}
+#         self.is_shown = is_shown
 
+#     def reset(self):
+#         start_player = random.randint(1,2)
+#         self.board.init_board(start_player)
+
+#     def step(self, a):
+#         if self.is_shown : self.graphic(self.board)
+#         current_player = self.board.get_current_player()
+#         player_in_turn = self.game.players[current_player]
+
+#     def close(self):
+#         pass
             
             
 

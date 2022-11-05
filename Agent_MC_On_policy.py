@@ -40,7 +40,8 @@ class MC_On_policy:
             if self.VERVOSE: print('Greedy action for %s -> %s' % (s, a))
         return a
 
-    def do_train(self):
+    # 전체 episode와 time step을 반복하면서 학습진행->종료
+    def do_train_e_t(self):
         for e in range(self.NUM_EPISODES):
             print("\rEpisode {}/{} --------------------- ".format(e, self.NUM_EPISODES), end="\n")
 

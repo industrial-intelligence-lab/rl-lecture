@@ -18,6 +18,14 @@ print(hash((0,7,4)))
 # print(hash(x))
 # print(hash(('aab',2,2)))
 
-x = np.array([[1,2,3], [1,12,3]])
-x[x > 2 and x < 10] = 7
-print(x)
+# x = np.array([[1,2,3], [1,12,3]])
+# x[x > 2 and x < 10] = 7
+# print(x)
+
+# from Omok_Utils import Omok_Utils
+
+# ut = Omok_Utils()
+# print(ut.hash([[1,2,3]], 2))
+
+# from Omok_Utils import Human 
+# p1 = Human()
