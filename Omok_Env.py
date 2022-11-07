@@ -187,27 +187,6 @@ class Game(object):
 
                 return winner_idx, self.players[winner_idx].get_id(), self.history
                             
-# class Omok_Env:
-    
-#     def __init__(self, player1, player2, width=9, height=9, n_in_row=5, is_shown=1):
-#         self.board = Board(width=width, height=height, n_in_row=n_in_row)
-#         self.game = Game(self.board)
-#         self.game.players = {1: player1, 2: player2}
-#         self.is_shown = is_shown
-
-#     def reset(self):
-#         start_player = random.randint(1,2)
-#         self.board.init_board(start_player)
-
-#     def step(self, a):
-#         if self.is_shown : self.graphic(self.board)
-#         current_player = self.board.get_current_player()
-#         player_in_turn = self.game.players[current_player]
-
-#     def close(self):
-#         pass
-            
-            
 
     
     '''

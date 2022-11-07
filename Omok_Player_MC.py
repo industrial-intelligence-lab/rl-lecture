@@ -12,6 +12,7 @@ class OmokPlayer_MC_Agent(object):
     Returns = defaultdict(list)        # {(s, a): [r,...,r]}
     traj = []
     last_s, last_a = -1, -1
+    tot_rewards = []
 
     ut = Omok_Utils()
 
@@ -58,18 +59,14 @@ class OmokPlayer_MC_Agent(object):
 
         return self.action_num_to_tuple(a)
 
-    # def get_action(self, board, p_id):
-    #     a = (np.random.randint(0, 9), (np.random.randint(0, 9)))
-    #     print("좌표선택", a, self.get_id(), p_id)                        
-    #     return a
-
     def episode_end(self, winner_idx_idx, winner_idx_id, board, p_id, history):
         
         # record the last transition
         s = self.ut.hash(board, p_id)
         r = 1.0 if winner_idx_id == self.get_id() else 0.0
         self.traj.append((self.last_s, self.last_a, r))
- 
+        self.tot_rewards.append(r)
+
         # G
         G = 0
 
@@ -90,4 +87,6 @@ class OmokPlayer_MC_Agent(object):
                 if self.VERVOSE: print('Update Q(%s,%s) -> %f' % (s, a, self.Q[s][a]))
 
     def get_id(self):
-        return self.GAME_ID
+        return self.GAME_ID 
+
+

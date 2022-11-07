@@ -1,31 +1,32 @@
-import numpy as np
 import random
+from itertools import count
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+import time
+ 
+plt.style.use('fivethirtyeight')
+ 
+x_val = []
+y_val = []
+ 
+index = count()
+ 
+def animate(i):
+    x_val.append(next(index))
+    y_val.append(random.randint(0,5))
+    plt.cla()
+    plt.plot(x_val, y_val)
+ 
+# ani = FuncAnimation(plt.gcf(), animate)
+ 
 
-N = 5
 
-x = ((random.random() for i in range(N)) for j in range(N))
-# for i in x:
-#     for j in i:
-#         print(j)
-print(hash(x))
-x = ((random.random() for i in range(N)) for j in range(N))
-
-print(hash(x))
-x = ((random.random() for i in range(N)) for j in range(N))
-
-print(hash((0,7,4)))
-# x = [[random.random() for i in range(N)] for j in range(N)]
-# print(hash(x))
-# print(hash(('aab',2,2)))
-
-# x = np.array([[1,2,3], [1,12,3]])
-# x[x > 2 and x < 10] = 7
-# print(x)
-
-# from Omok_Utils import Omok_Utils
-
-# ut = Omok_Utils()
-# print(ut.hash([[1,2,3]], 2))
-
-# from Omok_Utils import Human 
-# p1 = Human()
+for _ in range(10):
+    print('aaa')
+    plt.pause(0.001)
+    animate(0)
+    
+print('bbb')
+plt.tight_layout()
+plt.show()    
