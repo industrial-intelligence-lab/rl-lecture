@@ -11,7 +11,7 @@ from Omok_Player_MC import OmokPlayer_MC_Agent as a2
 # from Omok_Player_Human import OmokPlayer as h2
 
 IS_SHOWN = 0
-IS_SHOWN_AFTER = 1000000
+IS_SHOWN_AFTER = 3000000
 REPORTING = False
 
 tot_rewards = [[],[]]
@@ -24,7 +24,7 @@ def perf_graph(i):
     plt.plot(range(len(np.array(tot_rewards[1], dtype=int))), tot_rewards[1], label='a2')
 
 if __name__ == '__main__':
-    board_size = 7
+    board_size = 6
     n = 3
     board = Board(width=board_size, height=board_size, n_in_row=n)
     game = Game(board)

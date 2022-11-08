@@ -3,18 +3,19 @@ from collections import defaultdict
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-class MC_On_policy:
+class Sarsa_On_policy:
 
     # Global vars
     Q = {}                             # {s: [a,...,a]}
     Returns = defaultdict(list)        # {(s, a): [r,...,r]}
 
-    def __init__(self, env, NUM_ACTS, NUM_EPISODES=100, ETA=0.2, GAMMA=0.9, VERVOSE=True, REPORTING=True):
+    def __init__(self, env, NUM_ACTS, NUM_EPISODES=100, ETA=0.1, GAMMA=0.9, ALPHA=0.1, VERVOSE=True, REPORTING=True):
         self.env = env
         self.NUM_ACTS = NUM_ACTS
         self.NUM_EPISODES = NUM_EPISODES
         self.ETA = ETA
         self.GAMMA = GAMMA
+        self.ALPHA = ALPHA
         self.VERVOSE = VERVOSE
         self.REPORTING = REPORTING
         self.Q = defaultdict(lambda: np.random.rand(NUM_ACTS))
@@ -38,7 +39,6 @@ class MC_On_policy:
 
     # 전체 episode와 time step을 반복하면서 학습진행->종료
     def do_train_e_t(self):
-
         # Reporting
         tot_rewards = []
         tot_steps = []
@@ -53,17 +53,27 @@ class MC_On_policy:
             terminated = False
             truncated = False
 
-            # Trajectory
-            traj = []
             num_steps = 0
             fin_reward = 0
             # Generate an episode
             while not terminated and not truncated: 
                 # a = np.random.choice(NUM_ACTS, p=PI[s])
                 a = self.get_action(s)
-                next_s, r, terminated, truncated, info = self.env.step(a)       
-                traj.append((s, a, r))
-                if self.VERVOSE: print("State:", s, "Action", a, "Reward:", r, "Terminated:", terminated, "Truncated:", truncated, "Info:", info)
+                next_s, r, terminated, truncated, info = self.env.step(a)   
+                # Sarsa update
+                next_a = self.get_action(next_s)
+                # set Q for terminated or truncated
+                if terminated:
+                    self.Q[next_s][next_a] = 0.0                
+                td_target = r + self.GAMMA * self.Q[next_s][next_a]
+                td_error = td_target - self.Q[s][a]
+                old_Q = self.Q[s][a]
+                self.Q[s][a] += self.ALPHA * td_error
+
+                if self.VERVOSE: print("State:", s, "Action", a, "Reward:", r, "Next state:", next_s, "Next action:", next_a, \
+                                                     "Terminated:", terminated, "Truncated:", truncated, "Info:", info)
+                # if self.VERVOSE: print('Q', old_Q, '->', self.Q[s][a], 'td_target:',td_target, 'td_error:', td_error)
+                
                 s = next_s
                 num_steps += 1
                 fin_reward += r
@@ -71,31 +81,7 @@ class MC_On_policy:
             tot_steps.append(num_steps)
 
             if self.VERVOSE: print(f"--> Reward: {fin_reward}, #Steps: {num_steps}, \
-                        Avg Rewards: {(np.average(tot_rewards))}, Avg steps: {np.average(tot_steps)}")
-
-            # Check trajectory
-            if self.VERVOSE:
-                for i, t in enumerate(traj):
-                    print(i, t)
-
-            # G
-            G = 0
-
-            # For each step
-            for i, (s, a, r) in reversed(list(enumerate(traj))):
-                # Update G
-                G = self.GAMMA*G + r
-                first_idx = next(j for j, t in enumerate(traj) if t[0] == s and t[1] == a)
-                if self.VERVOSE: print(i, (s, a, r), first_idx)
-                if i == first_idx:
-                    # print(i, (s, a, r))
-                    # Append G to (s, a)
-                    self.Returns[(s, a)].append(G)
-                    # Check returns
-                    if self.VERVOSE: print('Returns(%s,%s) -> %s' % (s, a, self.Returns[(s, a)]))            
-                    # Update Q
-                    self.Q[s][a] = sum(self.Returns[(s, a)]) / len(self.Returns[(s, a)])
-                    if self.VERVOSE: print('Update Q(%s,%s) -> %f' % (s, a, self.Q[s][a]))
+                        Avg Rewards: {(np.average(tot_rewards))}, Avg steps: {np.average(tot_steps)}")                        
 
         # Env close
         self.env.close()
@@ -104,7 +90,7 @@ class MC_On_policy:
         def perf_graph(i):    
             plt.cla()
             print()
-            plt.plot(range(len(np.array(tot_rewards, dtype=int))),tot_rewards)
+            plt.plot(range(len(np.array(tot_rewards, dtype=int))), tot_rewards)
 
         if self.REPORTING:
             perf_graph(1)
