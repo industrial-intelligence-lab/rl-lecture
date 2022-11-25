@@ -105,7 +105,7 @@ class Board(object):
 
 class Game(object):
     players = {}
-    SLEEP_TIME = 5
+    SLEEP_TIME = 10
     move_result = -100
     history = []
 
@@ -121,18 +121,18 @@ class Game(object):
         cur_p_id = self.players[board.current_player].get_id()
 
         # clear_output(wait=True)
-        os.system('cls')
+        os.system('clear')
         
         print()
-        print("흑돌(●) : 플레이어 %s(%d)" % (p1_id, p1_idx))
-        print("백돌(○) : 플레이어 %s(%d)" % (p2_id, p2_idx))
+        print("흑돌(O) : 플레이어 %s(%d)" % (p1_id, p1_idx))
+        print("백돌(X) : 플레이어 %s(%d)" % (p2_id, p2_idx))
         print("--------------------------------\n")
                 
         print("%s(%d) 차례입니다.\n" % (cur_p_id, board.current_player))
             
-        row_number = ['⒪','⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁']
-        # row_number = range(14)
-        print('　', end='')
+        # row_number = ['⒪','⑴','⑵','⑶','⑷','⑸','⑹','⑺','⑻','⑼','⑽','⑾','⑿','⒀','⒁']
+        row_number = range(14)
+        print(' ', end='')
         for i in range(height) : print(row_number[i], end='')
         print()
         for i in range(height):
@@ -140,9 +140,11 @@ class Game(object):
             for j in range(width):
                 loc = i * width + j
                 p = board.states.get(loc, -1)
-                if p == p1_idx : print('●', end='')
-                elif p == p2_idx : print('○', end='')                
-                else : print('　', end='')
+                # if p == p1_idx : print('●', end='')
+                # elif p == p2_idx : print('○', end='')                
+                if p == p1_idx : print('O', end='')
+                elif p == p2_idx : print('X', end='')                
+                else : print(' ', end='')
             print()
         if board.last_loc != -1 :
             previous_p_idx = (2 if board.current_player == 1 else 1)
