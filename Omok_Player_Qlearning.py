@@ -56,11 +56,11 @@ class OmokPlayer_Qlearning_Agent(object):
         s = self.ut.hash(board, p_id)
         a = self.get_action_policy(s)
 
-        # sarsa training (self.last_s, self.last_a, r=0, s, a)
+        # q training (self.last_s, self.last_a, r=0, s)
         if self.last_s != -1: 
             r = 0
-            next_a = self.random_argmax(self.Q[s])
-            td_target = r + self.GAMMA * self.Q[s][next_a]
+            next_best_a = self.random_argmax(self.Q[s])
+            td_target = r + self.GAMMA * self.Q[s][next_best_a]
             td_error = td_target - self.Q[self.last_s][self.last_a]
             self.Q[self.last_s][self.last_a] += self.ALPHA * td_error
 
@@ -80,9 +80,8 @@ class OmokPlayer_Qlearning_Agent(object):
         r = 1.0 if winner_idx_id == self.get_id() else 0.0
         self.tot_rewards.append(r)
 
-        # sarsa training for last (self.last_s, self.last_a, r=0, s, a)
-        td_target = r
-        td_error = td_target - self.Q[self.last_s][self.last_a]
+        # q training for the last (self.last_s, self.last_a, r, s)
+        td_error = r - self.Q[self.last_s][self.last_a]
         self.Q[self.last_s][self.last_a] += self.ALPHA * td_error
 
     def get_id(self):

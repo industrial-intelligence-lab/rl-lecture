@@ -16,6 +16,7 @@ env = gym.make('FrozenLake-v1', desc=map_desc, map_name="4x4", is_slippery=False
 
 # Env reset
 observation, info = env.reset()
+print('observation',observation)
 
 # terminiation condition
 terminated = False

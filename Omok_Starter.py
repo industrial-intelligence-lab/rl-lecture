@@ -13,7 +13,7 @@ from Omok_Player_Sarsa import OmokPlayer_Sarsa_Agent as sarsa
 from Omok_Player_Qlearning import OmokPlayer_Qlearning_Agent as q
 
 IS_SHOWN = 0
-IS_SHOWN_AFTER = 5000000
+IS_SHOWN_AFTER = 10000000
 REPORTING = False
 
 tot_rewards = [[],[]]
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     board = Board(width=board_size, height=board_size, n_in_row=n)
     game = Game(board)
     agent1 = a1(board_size) #, ETA=0.2, GAMMA=0.9, VERVOSE=False, REPORTING=False)
-    agent2 = q(board_size, ETA=0.05, GAMMA=0.9, ALPHA=0.15, VERVOSE=False, REPORTING=False)
+    agent2 = q(board_size, ETA=0.05, GAMMA=0.9, ALPHA=0.2, VERVOSE=False, REPORTING=False)
     # agent2.GAME_ID = '2호기'
 
     game.SLEEP_TIME = 1

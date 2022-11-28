@@ -48,6 +48,8 @@ class Qlearning_On_policy:
 
             # Env reset
             s, info = self.env.reset()
+            print('s for reset',s)
+
 
             # Terminiation condition
             terminated = False
